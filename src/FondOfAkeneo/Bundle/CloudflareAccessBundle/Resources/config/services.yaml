@@ -1,0 +1,17 @@
+services:
+    fond_of_akeneo_cloudflare_access.jwt_verifier:
+        class: FondOfAkeneo\Bundle\CloudflareAccessBundle\Security\CloudflareJwtVerifier
+        arguments:
+            $httpClient: '@http_client'
+            $cache: '@cache.app'
+            $teamDomain: '%fond_of_akeneo_cloudflare_access.team_domain%'
+            $applicationAudience: '%fond_of_akeneo_cloudflare_access.application_audience%'
+
+    FondOfAkeneo\Bundle\CloudflareAccessBundle\Security\CloudflareAccessAuthenticator:
+        arguments:
+            # "chain_provider" is the user provider configured on Akeneo's "main"
+            # firewall (config/packages/security.yml) - reuses the same lookup
+            # Akeneo's own form_login uses, so behaviour stays consistent.
+            $userProvider: '@security.user.provider.concrete.chain_provider'
+            $jwtVerifier: '@fond_of_akeneo_cloudflare_access.jwt_verifier'
+            $logger: '@logger'
